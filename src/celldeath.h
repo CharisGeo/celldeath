@@ -18,9 +18,25 @@
 
 namespace bdm {
 
+struct RemoveFromSimulation : public BaseBiologyModule {
+   RemoveFromSimulation() : BaseBiologyModule(gAllBmEvents) {}
+
+template <typename T>
+void Run(T* cell) {
+  if (cell->GetDiameter() < 35) {
+      cell->ChangeVolume(400);
+    }
+    else {
+   cell->RemoveFromSimulation();
+      }
+    ClassDefNV(RemoveFromSimulation, 1);
+   };
+
 // Define compile time parameter
 template <typename Backend>
-struct CompileTimeParam : public DefaultCompileTimeParam<Backend> {};
+struct CompileTimeParam : public DefaultCompileTimeParam<Backend> {
+using BiologyModules = Variant<RemoveFromSimulation>;
+};
 
 inline int Simulate(int argc, const char** argv) {
   Simulation<> simulation(argc, argv);
@@ -28,9 +44,10 @@ inline int Simulate(int argc, const char** argv) {
   // Define initial model - in this example: single cell at origin
   auto* rm = simulation.GetResourceManager();
   auto&& cell = rm->New<Cell>(30);
+  cell.AddBiologyModule(RemoveFromSimulation());
 
   // Run simulation for one timestep
-  simulation.GetScheduler()->Simulate(1);
+  simulation.GetScheduler()->Simulate(2000);
 
   std::cout << "Simulation completed successfully!" << std::endl;
   return 0;
