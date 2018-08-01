@@ -23,8 +23,8 @@ struct RemoveFromSimulationBM : public BaseBiologyModule {
 
   template <typename T>
   void Run(T* cell) {
-    if (cell->GetDiameter() < 35) {
-      cell->ChangeVolume(400);
+    if (cell->GetDiameter() < 34) {
+      cell->ChangeVolume(4000);
     } else {
       cell->RemoveFromSimulation();
     }
